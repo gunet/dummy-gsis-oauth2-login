@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const config = require("./config");
 
 app.set("view engine", "pug");
 app.set('views', path.join(__dirname, 'views'));
@@ -62,7 +63,7 @@ app.post('/userinfo', (req, res) => {
     });
 });
 
-const server = app.listen(4099, '0.0.0.0', () => {
+const server = app.listen(config.port || 4099, config.address || '0.0.0.0', () => {
   console.log(
     "Listening on: " + server.address().address + ":" + server.address().port
   );
