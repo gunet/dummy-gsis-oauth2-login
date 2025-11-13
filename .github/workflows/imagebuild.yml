@@ -8,7 +8,6 @@ on:
       - "main"
     paths:
       - 'Dockerfile'
-      - 'config/**'
       - 'views/**'
       - 'index.js'
       - 'package.json'
