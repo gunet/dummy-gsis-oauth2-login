@@ -54,13 +54,16 @@ app.get('/logout/*', (req, res) => {
 
 app.post('/userinfo', (req, res) => {
   console.log('userinfo - post (client IP ' + req.ip + ')');
+  const userid = process.env.USERID || 'gunetdemo';
+  const taxid = process.env.TAXID || '012345678';
+  const lastname = process.env.LASTNAME || 'ΔΟΚΙΜΑΣΤΙΚΟΣ';
   return res.status(200).json(
     {
       "root": {
         "userinfo": {
-          "taxid": "068933130",
-          "userid": "User068933130",
-          "lastname": "βαβουλα",
+          "taxid": taxid,
+          "userid": userid,
+          "lastname": lastname,
           "firstname": "ΕΥΤΥΧΙΑ",
           "fathername": "ΕΜΜΑΝΟΥΗΛ",
           "mothername": "ΑΝΝΑ",
