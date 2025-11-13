@@ -1,13 +1,17 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const config = require("./config");
 
 app.set("view engine", "pug");
 app.set('views', path.join(__dirname, 'views'));
 
 
 app.get('/authorize', (req, res) => {
+  // If we are not given a redirect_uri, we cannot continue (and log the error)
+  if (!req.query.redirect_uri) {
+    console.error('Missing redirect_uri parameter');
+    return res.status(400).send('Missing redirect_uri parameter');
+  }
   console.log(req.query);
   console.log(req.query.redirect_uri);
   const redirectUri = new URL(req.query.redirect_uri);
@@ -37,7 +41,11 @@ app.post('/token', (req, res) => {
 app.get('/userinfo', (req, res) => {
   console.log('userinfo - get');
   res.set('Content-Type', 'text/xml');
-  return res.status(200).send('<root><userinfo userid="rg1201" taxid="068933130   " lastname="ΒΑΒΟΥΛΑ" firstname="ΕΥΤΥΧΙΑ" fathername="ΕΜΜΑΝΟΥΗΛ" mothername="ΑΝΝΑ" birthyear="1950"/></root>')
+  const userid = process.env.USERID || 'gunetdemo';
+  const taxid = process.env.TAXID || '012345678';
+  const lastname = process.env.LASTNAME || 'ΔΟΚΙΜΑΣΤΙΚΟΣ';
+  
+  return res.status(200).send(`<root><userinfo userid="${userid}" taxid="${taxid}" lastname="${lastname}" firstname="ΕΥΤΥΧΙΑ" fathername="ΕΜΜΑΝΟΥΗΛ" mothername="ΑΝΝΑ" birthyear="1950"/></root>`)
 });
 
 app.get('/logout/*', (req, res) => {
@@ -63,8 +71,26 @@ app.post('/userinfo', (req, res) => {
     });
 });
 
-const server = app.listen(config.port || 4099, config.address || '0.0.0.0', () => {
+// Listen on env.PORT or 4099
+const server = app.listen(process.env.PORT || 4099, process.env.ADDRESS || '0.0.0.0', () => {
   console.log(
     "Listening on: " + server.address().address + ":" + server.address().port
   );
+});
+
+// Graceful shutdown handling
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated');
+    process.exit(0);
+  });
 });

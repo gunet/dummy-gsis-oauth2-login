@@ -1,0 +1,9 @@
+services:
+  dummy-gsis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/gunet/dummy-gsis:latest
+    ports:
+      - "4099:4099"
+    restart: unless-stopped

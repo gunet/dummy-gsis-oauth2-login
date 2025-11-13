@@ -1,0 +1,46 @@
+name: dummy-gsis-build
+run-name: Build dummy-gsis Docker image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - 'Dockerfile'
+      - 'config/**'
+      - 'views/**'
+      - 'index.js'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  image-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set timezone
+        run: sudo timedatectl set-timezone 'Europe/Athens'
+      - name: Get date
+        id: date
+        run: echo "push_date=$(date '+%H:%M@%d/%m/%Y')" >> $GITHUB_OUTPUT
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push dummy-gsis image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          provenance: false
+          sbom: false
+          tags: ghcr.io/gunet/dummy-gsis:${{ env.TAG_NAME }}
+          labels: gr.gunet.dummy-gsis.pushdate=${{ steps.date.outputs.push_date }}
+          cache-from: type=registry,ref=ghcr.io/gunet/dummy-gsis:buildcache
+          cache-to: type=registry,ref=ghcr.io/gunet/dummy-gsis:buildcache,mode=max
