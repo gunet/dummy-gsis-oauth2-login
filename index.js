@@ -12,8 +12,7 @@ app.get('/authorize', (req, res) => {
     console.error('Missing redirect_uri parameter');
     return res.status(400).send('Missing redirect_uri parameter');
   }
-  console.log(req.query);
-  console.log(req.query.redirect_uri);
+  console.log('authorize (client IP ' + req.ip + ') with redirect uri:' + req.query.redirect_uri);
   const redirectUri = new URL(req.query.redirect_uri);
   redirectUri.searchParams.append('code', '11231231123');
   redirectUri.searchParams.append('state', req.query.state);
@@ -25,7 +24,7 @@ app.post('/authorize', (req, res) => {
 });
 
 app.post('/token', (req, res) => {
-  console.log('token');
+  console.log('token (client IP ' + req.ip + ')');
   const responseObject = {
     access_token: 'blabla',
     token_type: "example",
@@ -39,7 +38,7 @@ app.post('/token', (req, res) => {
 });
 
 app.get('/userinfo', (req, res) => {
-  console.log('userinfo - get');
+  console.log('userinfo - get (client IP ' + req.ip + ')');
   res.set('Content-Type', 'text/xml');
   const userid = process.env.USERID || 'gunetdemo';
   const taxid = process.env.TAXID || '012345678';
@@ -54,7 +53,7 @@ app.get('/logout/*', (req, res) => {
 })
 
 app.post('/userinfo', (req, res) => {
-  console.log('userinfo - post');
+  console.log('userinfo - post (client IP ' + req.ip + ')');
   return res.status(200).json(
     {
       "root": {
