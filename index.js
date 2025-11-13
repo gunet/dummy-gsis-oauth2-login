@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 
+app.use(express.json());
 app.set("view engine", "pug");
 app.set('views', path.join(__dirname, 'views'));
 
@@ -21,6 +22,17 @@ app.get('/authorize', (req, res) => {
 
 app.post('/authorize', (req, res) => {
   return res.redirect(req.query.redirect_uri);
+});
+
+app.post('/setuserinfo', (req, res) => {
+  const { user, afm, lastname } = req.body;
+  console.log(`Set userinfo called with user: ${user}, afm: ${afm} and lastname: ${lastname}`);
+
+  process.env.USERID = user;
+  process.env.LASTNAME = lastname;
+  process.env.TAXID = afm;
+
+  return res.status(200).json({ message: 'User info set successfully' });
 });
 
 app.post('/token', (req, res) => {
@@ -57,6 +69,7 @@ app.post('/userinfo', (req, res) => {
   const userid = process.env.USERID || 'gunetdemo';
   const taxid = process.env.TAXID || '012345678';
   const lastname = process.env.LASTNAME || 'ΔΟΚΙΜΑΣΤΙΚΟΣ';
+  
   return res.status(200).json(
     {
       "root": {
