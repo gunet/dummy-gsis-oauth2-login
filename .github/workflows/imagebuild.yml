@@ -40,7 +40,7 @@ jobs:
           push: true
           provenance: false
           sbom: false
-          tags: ghcr.io/gunet/dummy-gsis:${{ env.TAG_NAME }}
+          tags: ghcr.io/gunet/dummy-gsis:latest
           labels: gr.gunet.dummy-gsis.pushdate=${{ steps.date.outputs.push_date }}
           cache-from: type=registry,ref=ghcr.io/gunet/dummy-gsis:buildcache
           cache-to: type=registry,ref=ghcr.io/gunet/dummy-gsis:buildcache,mode=max
