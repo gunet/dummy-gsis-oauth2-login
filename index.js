@@ -15,7 +15,9 @@ app.get('/authorize', (req, res) => {
   }
   console.log('authorize (client IP ' + req.ip + ') with redirect uri:' + req.query.redirect_uri);
   const redirectUri = new URL(req.query.redirect_uri);
-  redirectUri.searchParams.append('code', '11231231123');
+  // Create a random 16 digit code for demonstration purposes
+  const code = Math.random().toString().slice(2, 18);
+  redirectUri.searchParams.append('code', code);
   redirectUri.searchParams.append('state', req.query.state);
   return res.render('authorize', {redirect: redirectUri.toString()});
 });
