@@ -102,7 +102,7 @@ html
       }
       h2 { color: rgb(0, 0, 0, .8); }
   body
-    div(id='login-form' method='post')
+    form(id='login-form' onsubmit="return false;")
       h2 National ID Authentication (DEMO)
       <div class="inputGroup inputGroup1">
         <label for="user">User</label>
@@ -118,12 +118,16 @@ html
         <input type="text" id="lastname" class="password" />
       </div>
       <div class="inputGroup inputGroup3">
-        <button id="login">Log in</button>
+        <button id="login" type="submit">Log in</button>
       </div>	
       hr
       label Redirect Url:
       textarea(id='redirect-text' style='height: 100px; width: 100%') !{redirect}
     script.
+      document.querySelector("#login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        document.querySelector("#login").click();
+      });
       document.querySelector("#login").addEventListener('click', async () => {
         const user = document.querySelector("#user").value.trim();
         const afm = document.querySelector("#afm").value.trim();
